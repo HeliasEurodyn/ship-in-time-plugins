@@ -1,0 +1,21 @@
+version: "3.5"
+services:
+  api-gateway:
+    build:
+      context: api-gateway
+      args:
+        TENACITY_IP: http://tenacity-backend:15511/api
+        SOFIA_IP: http://sofia-backend:15502/api
+      dockerfile: Dockerfile
+    image: api-gateway
+    container_name: api-gateway
+    ports:
+      - "15505:15502"
+    restart: unless-stopped
+    networks:
+      - tenacity
+networks:
+  tenacity:
+    external: true
+    name: tenacity
+    driver: bridge

@@ -1,0 +1,25 @@
+version: "3.5"
+services:
+  tenacity-backend:
+    build:
+      context: tenacity-backend
+      args:
+        DB_IP: tenacitydb
+        DB_PORT: 3306
+        DB_NAME: tenacity
+        DB_USERNAME: root
+        DB_PASSWORD: root
+        SOFIA_URI: http://sofia-backend:15502/api
+      dockerfile: Dockerfile
+    image: tenacity-backend
+    container_name: tenacity-backend
+    ports:
+      - "15504:15511"
+    restart: unless-stopped
+    networks:
+      - tenacity
+networks:
+  tenacity:
+    external: true
+    name: tenacity
+    driver: bridge

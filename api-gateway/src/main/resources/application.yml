@@ -1,0 +1,74 @@
+server:
+  port: 15502
+
+tenacity_xml_ip: http://localhost:15511
+sofia_ip: http://localhost:15505
+
+spring:
+  application:
+    name: API-GATEWAY
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+      routes:
+        - id: TENACITY_XML
+          uri: ${tenacity_xml_ip}
+          predicates:
+            - Path=/api/pnr-notification/**, /api/pnr-settings/**, /api/s1-user/**, /api/s1-shiping-product/**
+        - id: SOFIA
+          uri: ${sofia_ip}
+          predicates:
+            - Path=/api/**
+
+#  cloud:
+#    gateway:
+#      routes:
+#        - id: SOFIA
+#          uri: lb://USER-SERVICE
+#          predicates:
+#          - Path=/user/**
+#          filters:
+#            - name: CircuitBreaker
+#              args:
+#                name: USER-SERVICE
+#                fallbackuri: forward:/userServiceFallBack
+#        - id: MENU-SERVICE
+#          uri: lb://MENU-SERVICE
+#          predicates:
+#            - Path=/menu/**
+#          filters:
+#            - name: CircuitBreaker
+#              args:
+#                name: MENU-SERVICE
+#                fallbackuri: forward:/menuServiceFallBack
+
+#eureka:
+#  client:
+#    register-with-eureka: true
+#    fetch-registry: true
+#    service-url:
+#      defaultZone: http://localhost:8761/eureka/
+#  instance:
+#    hostname: localhost
+
+#hystrix:
+#  command:
+#    fallbackcmd:
+#      execution:
+#        isolation:
+#          thread:
+#            timeoutInMilliseconds: 4000
+#
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: hystrix.stream
+
